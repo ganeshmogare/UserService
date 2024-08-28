@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DatabaseMigrationSettings" lastSelectedDirectory="src/main/resources/db/migration">
+    <database-infos>
+      <database-info>
+        <dbms-id>mysql</dbms-id>
+        <mapping-types>
+          <mapping-type sql-type-parameter="Nothing">
+            <java-class>org.springframework.web.bind.support.SessionStatus</java-class>
+            <sql-type>enum</sql-type>
+          </mapping-type>
+        </mapping-types>
+      </database-info>
+    </database-infos>
+  </component>
+  <component name="PersistenceUnitSettings">
+    <persistence-units>
+      <persistence-unit moduleName="UserService" name="Default">
+        <packages>
+          <package value="com.scaler.userservice" />
+        </packages>
+      </persistence-unit>
+    </persistence-units>
+  </component>
+</project>

@@ -5,6 +5,6 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class SingUpResponse {
+public class SignUpResponse {
     private RequestStatus requestStatus;
 }

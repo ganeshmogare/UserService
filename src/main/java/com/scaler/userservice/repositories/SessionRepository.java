@@ -1,7 +1,8 @@
 package com.scaler.userservice.repositories;
 
-import org.springframework.stereotype.Repository;
+import com.scaler.userservice.models.Session;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-@Repository
-public class SessionRepository {
+public interface SessionRepository extends JpaRepository<Session, Long> {
+    Session save(Session session);
 }

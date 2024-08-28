@@ -4,6 +4,7 @@ import com.scaler.userservice.exceptions.UserAlreadyExistsException;
 import com.scaler.userservice.exceptions.UserNotFoundException;
 import com.scaler.userservice.exceptions.WrongPasswordException;
 import com.scaler.userservice.models.Session;
+import com.scaler.userservice.models.SessionStatus;
 import com.scaler.userservice.models.User;
 import com.scaler.userservice.repositories.SessionRepository;
 import com.scaler.userservice.repositories.UserRepository;
@@ -105,8 +106,21 @@ public class AuthService {
         return token;
     }
 
-    public void logout() {
-        System.out.println("Logout");
+    public boolean logout(String token) throws Exception{
+        try {
+            Optional<Session> session = sessionRepository.findByToken(token);
+
+            if (session.isEmpty()) {
+                throw new Exception("Invalid session");
+            }else{
+                session.get().setSessionStatus(SessionStatus.INACTIVE);
+                sessionRepository.save(session.get());
+            }
+
+            return true;
+        }catch(Exception e){
+            throw new Exception("Invalid session");
+        }
     }
 
     public void updateRole() {

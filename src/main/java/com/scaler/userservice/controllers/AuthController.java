@@ -57,6 +57,23 @@ public class AuthController {
         }
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<LogoutResponse> logout(@RequestBody LogoutRequest request) throws Exception {
+        LogoutResponse response = new LogoutResponse();
+        try {
+            Boolean res = authService.logout(request.getToken());
+            if (res) {
+                response.setRequestStatus(RequestStatus.SUCCESS);
+            } else {
+                response.setRequestStatus(RequestStatus.FAILURE);
+            }
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        }catch (Exception e) {
+            response.setRequestStatus(RequestStatus.FAILURE);
+            return new ResponseEntity<>(response, HttpStatus.CONFLICT);
+        }
+    }
+
     @GetMapping("/validate")
     public boolean validate(@RequestParam("token") String token) {
         return authService.validate(token);

@@ -76,11 +76,11 @@ public class SpringSecurityConfig {
         http
                 .authorizeHttpRequests((authorize) -> authorize
                         // .requestMatchers("/products/**").authenticated()
-                        .anyRequest().authenticated()
+                        .anyRequest().permitAll()
                 )
                 // Form login handles the redirect to the login page from the
                 // authorization server filter chain
-                .formLogin(Customizer.withDefaults());
+                .formLogin(Customizer.withDefaults()).csrf().disable();
 
         return http.build();
     }

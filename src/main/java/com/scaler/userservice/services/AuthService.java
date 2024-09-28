@@ -1,5 +1,9 @@
 package com.scaler.userservice.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.scaler.userservice.clients.KafkaProducerClient;
+import com.scaler.userservice.dtos.EmailDto;
 import com.scaler.userservice.exceptions.UserAlreadyExistsException;
 import com.scaler.userservice.exceptions.UserNotFoundException;
 import com.scaler.userservice.exceptions.WrongPasswordException;
@@ -12,6 +16,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +28,18 @@ import java.util.*;
 public class AuthService {
 
     private UserRepository userRepository;
+
+    @Autowired
+    private KafkaProducerClient kafkaProducerClient;
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     //private SecretKey key = Jwts.SIG.HS256.key().build();
     //using custom key
     private SecretKey key = Keys.hmacShaKeyFor("namanisveryveryveryveryveryveryverycool"
                     .getBytes(StandardCharsets.UTF_8));
     private SessionRepository sessionRepository;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     public AuthService(UserRepository userRepository,
                        BCryptPasswordEncoder bCryptPasswordEncoder,
@@ -49,6 +60,19 @@ public class AuthService {
         user.setPassword(bCryptPasswordEncoder.encode(password));
 
         userRepository.save(user);
+
+        //send message to kafka for welcome email
+        try {
+            EmailDto emailDto = new EmailDto();
+            emailDto.setTo(email);
+            emailDto.setSubject("Welcome to Ecomm");
+            emailDto.setBody("Have a pleaseant shopping experience!!");
+            emailDto.setFrom("anuragbatch@gmail.com");
+
+            kafkaProducerClient.sendMessage("user_signedIn", objectMapper.writeValueAsString(emailDto));
+        }catch (JsonProcessingException e){
+            throw new RuntimeException(e.getMessage());
+        }
 
         return true;
     }
